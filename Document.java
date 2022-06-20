@@ -1,4 +1,4 @@
-import java.sql.Date;
+import java.util.Date;
 
 public class Document {
 
@@ -9,11 +9,11 @@ public class Document {
     private int TopicID;
     private int CategoryID;
 
-    public Document(int DocumentID, String DocumentName, Date DocumentDate, String StorageAddress, int TopicID,
+    public Document(int DocumentID, String DocumentName, java.util.Date date, String StorageAddress, int TopicID,
             int CategoryID) {
         this.DocumentID = DocumentID;
         this.DocumentName = DocumentName;
-        this.DocumentDate = DocumentDate;
+        this.DocumentDate = date;
         this.StorageAddress = StorageAddress;
         this.TopicID = TopicID;
         this.CategoryID = CategoryID;
@@ -70,9 +70,13 @@ public class Document {
 
     @Override
     public String toString() {
-        return "Document{" + "DocumentID=" + DocumentID + ", DocumentName=" + DocumentName + ", DocumentDate="
-                + DocumentDate + ", StorageAddress=" + StorageAddress + ", TopicID=" + TopicID + ", CategoryID="
-                + CategoryID + '}';
+        return "\nDocument {\n\n" + "DocumentID = " + DocumentID + ",\nDocumentName = " + DocumentName + ",\nDocumentDate = "
+                + DocumentDate + ",\nStorageAddress = " + StorageAddress + ",\nTopicID = " + TopicID + ",\nCategoryID = "
+                + CategoryID + "\n\n}";
+    }
+
+    public void display() {
+        System.out.println(this.toString());
     }
 
 

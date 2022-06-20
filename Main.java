@@ -14,19 +14,16 @@ public class Main {
         String password = "gianlucca";
 
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
+
             System.out.println("\nDatabase connected! to " + database + "\n");
 
-            Statement st = connection.createStatement();
+            // Statement st = connection.createStatement();
+
+            // ResultSet rs = st.executeQuery("SELECT * FROM users");
 
             
 
-            String sql = "SELECT * FROM Category";
 
-            ResultSet rs = st.executeQuery(sql);
-
-            while (rs.next()) {
-                System.out.println(rs.getString("name"));
-            }
 
 
 

@@ -1,4 +1,4 @@
-import java.util.Date;
+import java.sql.Date;
 
 public class Document {
 
@@ -9,7 +9,7 @@ public class Document {
     private int TopicID;
     private int CategoryID;
 
-    public Document(int DocumentID, String DocumentName, java.util.Date date, String StorageAddress, int TopicID,
+    public Document(int DocumentID, String DocumentName, java.sql.Date date, String StorageAddress, int TopicID,
             int CategoryID) {
         this.DocumentID = DocumentID;
         this.DocumentName = DocumentName;

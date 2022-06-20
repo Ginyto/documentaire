@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.sql.Date;
 
 
 
@@ -16,9 +15,8 @@ public class Main {
         String url = "jdbc:mysql://localhost:3306/" + database;
         String username = "root";
         String password = "gianlucca";
-        
-        ArrayList <Document> documents = DocGenerator(5);
 
+        ArrayList<Document> documents = DocGenerator(0);
 
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
 
@@ -28,11 +26,45 @@ public class Main {
 
             UploadDocuments(documents, st);
 
-            // ResultSet rs = st.executeQuery("SELECT * FROM users");
+            System.out.println("\nDocuments uploaded!\n");
 
+            downloadSortedDocuments("TopicID", st);
+            downloadSortedDocuments("CategoryID", st);
+
+            //st.executeUpdate("INSERT INTO document(`DocumentName`,`DocumentDate`,`StorageAddress`,`TopicID`,`CategoryID`) VALUES('test','2022-06-20','test',1,1)");
+
+            // ResultSet rs = st.executeQuery("SELECT * FROM users");
 
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database! -> " + database, e);
+        }
+
+    }
+
+    
+
+    public static void displayDownloadDocuments(ResultSet rs, String title) {
+
+        System.out.println("\n" + title + "\n");
+        
+        try {
+            while (rs.next()) {
+                System.out.println(rs.getString("DocumentName"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+    }
+
+
+    public static void downloadSortedDocuments(String filtre, Statement st) throws SQLException {
+
+        for (int i = 1; i < 6; i++) {
+
+            ResultSet rs = st.executeQuery("SELECT * FROM document WHERE + " + filtre + "=" + i);
+
+            displayDownloadDocuments(rs, "Documents sorted by " + filtre + " N° " + i);
         }
 
     }
@@ -50,7 +82,7 @@ public class Main {
 
         for (int i = 1; i < quantity + 1; i++) {
 
-            Document doc = new Document(i, "Document " + i, new Date(i), "C:/documents/doc" + i, 1, 1);
+            Document doc = new Document("Document " + i);
 
             documents.add(doc);
 
@@ -75,30 +107,71 @@ public class Main {
 
     }
     
+
+    /**
+     * Uploads a list of documents to the database
+     * @param documents a list of documents
+     * @param st the statement
+     */
     public static void UploadDocuments(ArrayList<Document> documents, Statement st) {
-        
+
         for (Document doc : documents) {
 
             try {
-                st.executeUpdate(
+                st.executeUpdate(sqlAddDocument(doc));
 
-                        "INSERT INTO Document (DocumentID, DocumentName, DocumentDate, StorageAddress, TopicID, CategoryID) VALUES ("
-
-                        + doc.getDocumentID() + ", '"
-                        + doc.getDocumentName() + "', '"
-                        + doc.getDocumentDate() + "', '"
-                        + doc.getStorageAddress() + "', "
-                        + doc.getTopicID() + ", "
-                        + doc.getCategoryID() + ")"
-                );
-
-                System.out.println("\nDocument " + doc.getDocumentID() + " uploaded!\n");
+                System.out.println("\n" + doc.getDocumentName() + " uploaded!\n");
 
             } catch (SQLException e) {
                 System.out.println("Error uploading document " + doc.getDocumentID());
                 System.out.println(e);
             }
         }
+    }
+
+    
+    /**
+     * Generates a SQL query to add a document to the database
+     * @param doc the document
+     * @return String
+     */
+    public static String sqlAddDocument(Document doc) {
+
+        String sql = "INSERT INTO Document (DocumentName, DocumentDate, StorageAddress, TopicID, CategoryID) VALUES ("
+                + "'"
+
+                + doc.getDocumentName() + "', '"
+                + doc.getDocumentDate() + "', '"
+                + doc.getStorageAddress() + "', "
+                + doc.getTopicID() + ", "
+                + doc.getCategoryID() + ")";
+
+        //System.out.println(sql);
+
+        return sql;
+
+    }
+    
+
+    /**
+     * Generates a SQL query to add a document to the database
+     * 
+     * @param doc the document
+     * @return String
+     */
+    public static String sqlAddDocumentTag(Document doc) {
+
+        String sql = "INSERT INTO Document (DocumentName, DocumentDate, StorageAddress, TopicID, CategoryID) VALUES ("+ "'"
+            + doc.getDocumentName() + "', '"
+            + doc.getDocumentDate() + "', '"
+            + doc.getStorageAddress() + "', "
+            + doc.getTopicID() + ", "
+            + doc.getCategoryID() + ")";
+
+        // System.out.println(sql);
+
+        return sql;
+
     }
 
 }

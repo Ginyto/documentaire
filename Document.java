@@ -1,4 +1,5 @@
 import java.sql.Date;
+import java.util.Random;
 
 public class Document {
 
@@ -9,6 +10,8 @@ public class Document {
     private int TopicID;
     private int CategoryID;
 
+    Random random = new Random(); // instance of random class
+
     public Document(int DocumentID, String DocumentName, java.sql.Date date, String StorageAddress, int TopicID,
             int CategoryID) {
         this.DocumentID = DocumentID;
@@ -17,6 +20,15 @@ public class Document {
         this.StorageAddress = StorageAddress;
         this.TopicID = TopicID;
         this.CategoryID = CategoryID;
+    }
+
+    public Document(String DocumentName) {
+        this.DocumentID = 0;
+        this.DocumentName = DocumentName;
+        this.DocumentDate = new Date(System.currentTimeMillis());
+        this.StorageAddress = "C:/documents/" + this.DocumentName;
+        this.TopicID = (1 + random.nextInt(5));
+        this.CategoryID = (1 + random.nextInt(5));
     }
     
 

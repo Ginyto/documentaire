@@ -28,22 +28,71 @@ public class Main {
 
             System.out.println("\nDocuments uploaded!\n");
 
-            downloadSortedDocuments("TopicID", st);
+
             downloadSortedDocuments("CategoryID", st);
+            downloadSortedDocuments("TopicID", st);
+            displayMostTopic(st);
+            displayMostTag(st);
 
-            //st.executeUpdate("INSERT INTO document(`DocumentName`,`DocumentDate`,`StorageAddress`,`TopicID`,`CategoryID`) VALUES('test','2022-06-20','test',1,1)");
 
-            // ResultSet rs = st.executeQuery("SELECT * FROM users");
 
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database! -> " + database, e);
         }
 
     }
-
     
 
+    public static void displayMostTag(Statement st) throws SQLException {
+
+        int count = 0;
+
+        for (int i = 1; i < 6; i++) {
+            ResultSet rs = st.executeQuery("SELECT * FROM detenir WHERE Id_Tag = " + i);
+
+            while (rs.next()) {
+                count++;
+            }
+
+            System.out.println("Tag N° " + i + " has " + count + " documents");
+
+            count = 0;
+
+        }
+    }
+
+
+    public static void displayMostTopic(Statement st) throws SQLException {
+
+        int count = 0;
+        int currentCount = 0;
+        int topicID = 0;
+
+        for (int i = 1; i < 6; i++) {
+
+            ResultSet rs = st.executeQuery("SELECT * FROM document WHERE TopicID = " + i);
+
+            while (rs.next()) {
+
+                currentCount++;
+
+            }
+
+            if (currentCount > count) {
+
+                count = currentCount;
+                topicID = i;
+            }
+
+            currentCount = 0;
+        }
+        
+        System.out.println("\n\nTopic N° " + topicID + " is the best topic with " + count + " documents\n");
+
+    }
+
     public static void displayDownloadDocuments(ResultSet rs, String title) {
+
 
         System.out.println("\n" + title + "\n");
         
@@ -159,14 +208,15 @@ public class Main {
      * @param doc the document
      * @return String
      */
-    public static String sqlAddDocumentTag(Document doc) {
+    public static String sqlAddDocumentTag(int documentID, int tagID) {
 
-        String sql = "INSERT INTO Document (DocumentName, DocumentDate, StorageAddress, TopicID, CategoryID) VALUES ("+ "'"
-            + doc.getDocumentName() + "', '"
-            + doc.getDocumentDate() + "', '"
-            + doc.getStorageAddress() + "', "
-            + doc.getTopicID() + ", "
-            + doc.getCategoryID() + ")";
+        String sql = "INSERT INTO detenir(`DocumentID`,`Id_Tag`) VALUES("
+
+            + documentID + ", "
+            + tagID +
+            
+        ")";
+        
 
         // System.out.println(sql);
 

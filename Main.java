@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.Random;
 
 
 
@@ -17,7 +18,8 @@ public class Main {
         String username = "root";
         String password = "gianlucca";
 
-        ArrayList<Document> documents = DocGenerator(0);
+        ArrayList<Document> documents = DocGenerator(5);
+        Random random = new Random();
 
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
 
@@ -25,7 +27,7 @@ public class Main {
 
             Statement st = connection.createStatement();
 
-            UploadDocuments(documents, st);
+            UploadDocuments(documents, st, random);
 
             System.out.println("\nDocuments uploaded!\n");
 
@@ -34,9 +36,53 @@ public class Main {
             displayMostTopic(st);
             displayMostTag(st);
             fixDateDocument(st);
+            getSizeOfAllBook(st);
+            AddTagDocument(st, getSizeOfAllBook(st), random);
 
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database! -> " + database, e);
+        }
+
+    }
+
+    public static int getSizeOfAllBook(Statement st) {
+
+        int size = 0;
+
+        try {
+
+            ResultSet rs = st.executeQuery("SELECT * FROM Document");
+
+            while (rs.next()) {
+                size++;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        //System.out.println("\nSize of all books: " + size + "\n");
+
+        return size;
+
+    }
+    
+    public static void AddTagDocument(Statement st, int documentID, Random random) {
+
+        int max = (1 + random.nextInt(3));
+
+        for (int i = 0; i < max; i++) {
+
+            int tagID = (1 + random.nextInt(5));
+
+            try {
+
+                st.executeUpdate("INSERT INTO detenir (DocumentID, Id_Tag) VALUES (" + documentID + ", " + tagID + ")");
+
+            } catch (SQLException e) {
+                
+            }
+
         }
 
     }
@@ -168,14 +214,19 @@ public class Main {
      * @param documents a list of documents
      * @param st the statement
      */
-    public static void UploadDocuments(ArrayList<Document> documents, Statement st) {
+    public static void UploadDocuments(ArrayList<Document> documents, Statement st, Random random) {
+
+        int id = getSizeOfAllBook(st) + 1;
 
         for (Document doc : documents) {
 
             try {
                 st.executeUpdate(sqlAddDocument(doc));
+                AddTagDocument(st, id, random);
 
                 System.out.println("\n" + doc.getDocumentName() + " uploaded!\n");
+
+                id++;
 
             } catch (SQLException e) {
                 System.out.println("Error uploading document " + doc.getDocumentID());

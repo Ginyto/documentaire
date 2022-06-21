@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.sql.Date;
 
 
 
@@ -28,18 +29,23 @@ public class Main {
 
             System.out.println("\nDocuments uploaded!\n");
 
-
             downloadSortedDocuments("CategoryID", st);
             downloadSortedDocuments("TopicID", st);
             displayMostTopic(st);
             displayMostTag(st);
-
-
+            fixDateDocument(st);
 
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database! -> " + database, e);
         }
 
+    }
+    
+
+    public static void fixDateDocument(Statement st) throws SQLException {
+        st.executeUpdate("UPDATE document SET DocumentDate = '" + new Date(System.currentTimeMillis()) + "' WHERE DocumentDate IS NULL");
+
+        System.out.println("\nDate fixed!\n");
     }
     
 
